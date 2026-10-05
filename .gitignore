@@ -1,0 +1,17 @@
+# Geheimnisse
+.env
+*.env
+!config/env.example
+
+# Backups und Datenbanken (personenbezogene Daten)
+*.zip
+*.sql
+*.accdb
+*.mdb
+*.csv
+DB_access/
+
+# System
+Thumbs.db
+.DS_Store
+desktop.ini

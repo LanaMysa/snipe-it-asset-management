@@ -1,0 +1,36 @@
+# Bereinigte Vorlage – Original: /home/itadmin/snipe-it/docker-compose.yml (an Original angleichen).
+# Basiert auf der offiziellen Snipe-IT-Vorlage.
+
+volumes:
+  db_data:
+  storage:
+
+services:
+  snipeit-app:
+    image: snipe/snipe-it:latest   # Empfehlung: feste Version, z. B. v8.5.0
+    restart: unless-stopped
+    volumes:
+      - storage:/var/lib/snipeit
+    ports:
+      - "${APP_PORT:-8080}:80"
+    depends_on:
+      snipeit-db:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  snipeit-db:
+    image: mariadb:11
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 1s
+      retries: 5
